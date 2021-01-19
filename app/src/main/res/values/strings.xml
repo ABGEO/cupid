@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CUpid</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="by_abgeo">By ABGEO</string>
 </resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navEntryPointFragment">
+
+    <fragment
+        android:id="@+id/navEntryPointFragment"
+        android:name="dev.abgeo.cupid.fragment.EntryPointFragment"
+        android:label="fragment_entry_point"
+        tools:layout="@layout/fragment_entry_point" >
+        <action
+            android:id="@+id/action_navEntryPointFragment_to_navLoginFragment"
+            app:destination="@id/navLoginFragment" />
+        <action
+            android:id="@+id/action_navEntryPointFragment_to_navRegistrationFragment"
+            app:destination="@id/navRegistrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navLoginFragment"
+        android:name="dev.abgeo.cupid.fragment.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/navRegistrationFragment"
+        android:name="dev.abgeo.cupid.fragment.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" />
+</navigation>
