@@ -16,15 +16,31 @@
         <action
             android:id="@+id/action_navEntryPointFragment_to_navRegistrationFragment"
             app:destination="@id/navRegistrationFragment" />
+        <action
+            android:id="@+id/action_navEntryPointFragment_to_navHomeFragment"
+            app:destination="@id/navHomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/navLoginFragment"
         android:name="dev.abgeo.cupid.fragment.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_navLoginFragment_to_navHomeFragment"
+            app:destination="@id/navHomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/navRegistrationFragment"
         android:name="dev.abgeo.cupid.fragment.RegistrationFragment"
         android:label="fragment_registration"
-        tools:layout="@layout/fragment_registration" />
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_navRegistrationFragment_to_navHomeFragment"
+            app:destination="@id/navHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navHomeFragment"
+        android:name="dev.abgeo.cupid.fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 </navigation>
