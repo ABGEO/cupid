@@ -17,9 +17,14 @@ class ProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
         val ibSettings = view.findViewById<ImageButton>(R.id.ibSettings)
+        val ibEdit = view.findViewById<ImageButton>(R.id.ibEdit)
 
         ibSettings.setOnClickListener {
             findNavController().navigate(R.id.action_navHomeFragment_to_navSettingsFragment)
+        }
+
+        ibEdit.setOnClickListener {
+            findNavController().navigate(R.id.action_navHomeFragment_to_navEditProfileFragment)
         }
 
         return view

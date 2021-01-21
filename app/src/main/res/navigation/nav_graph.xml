@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_navHomeFragment_to_navSettingsFragment"
             app:destination="@id/navSettingsFragment" />
+        <action
+            android:id="@+id/action_navHomeFragment_to_navEditProfileFragment"
+            app:destination="@id/navEditProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/navSettingsFragment"
@@ -56,4 +59,9 @@
             android:id="@+id/action_navSettingsFragment_to_navEntryPointFragment"
             app:destination="@id/navEntryPointFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/navEditProfileFragment"
+        android:name="dev.abgeo.cupid.fragment.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>

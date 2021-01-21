@@ -18,4 +18,5 @@
     <string name="password_is_empty">Password can not be empty.</string>
     <string name="gender_is_empty">Select the gender.</string>
     <string name="invalid_credentials">Invalid credentials was provided.</string>
+    <string name="save_profile">Save Profile</string>
 </resources>
