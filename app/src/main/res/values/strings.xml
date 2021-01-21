@@ -11,7 +11,10 @@
     <string name="name_is_invalid">Name can not be empty.</string>
     <string name="email_is_taken">This email is already taken.</string>
     <string name="email_is_invalid">This email is not valid.</string>
+    <string name="email_is_empty">Email can not be empty.</string>
     <string name="passwords_mismatch">Passwords does not match.</string>
     <string name="password_is_invalid">Password should be at least 6 characters.</string>
+    <string name="password_is_empty">Password can not be empty.</string>
     <string name="gender_is_empty">Select the gender.</string>
+    <string name="invalid_credentials">Invalid credentials was provided.</string>
 </resources>

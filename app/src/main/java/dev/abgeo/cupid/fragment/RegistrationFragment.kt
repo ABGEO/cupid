@@ -17,6 +17,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
+import dev.abgeo.cupid.helper.setErrorWithFocus
 
 class RegistrationFragment : Fragment() {
     private val TAG = this::class.qualifiedName
@@ -63,19 +64,19 @@ class RegistrationFragment : Fragment() {
 
             when {
                 etName.text.isEmpty() -> {
-                    setError(etName, R.string.name_is_invalid)
+                    etName.setErrorWithFocus(getText(R.string.name_is_invalid))
                 }
                 etEmail.text.isEmpty() -> {
-                    setError(etEmail, R.string.email_is_invalid)
+                    etEmail.setErrorWithFocus(getText(R.string.email_is_empty))
                 }
                 etPassword.text.length < 6 -> {
-                    setError(etPassword, R.string.password_is_invalid)
+                    etPassword.setErrorWithFocus(getText(R.string.password_is_invalid))
                 }
                 etPassword.text.toString() != etRepeatPassword.text.toString() -> {
-                    setError(etRepeatPassword, R.string.passwords_mismatch)
+                    etRepeatPassword.setErrorWithFocus(getText(R.string.passwords_mismatch))
                 }
                 gender == 0 -> {
-                    setError(rbMale, R.string.gender_is_empty)
+                    rbMale.setErrorWithFocus(getText(R.string.gender_is_empty))
                 }
                 else -> {
                     auth.createUserWithEmailAndPassword(
@@ -104,15 +105,15 @@ class RegistrationFragment : Fragment() {
 
                                 when (task.exception) {
                                     is FirebaseAuthUserCollisionException -> {
-                                        setError(etEmail, R.string.email_is_taken)
+                                        etEmail.setErrorWithFocus(getText(R.string.email_is_taken))
                                     }
                                     is FirebaseAuthWeakPasswordException -> {
-                                        setError(etPassword, R.string.password_is_invalid)
+                                        etPassword.setErrorWithFocus(getText(R.string.password_is_invalid))
                                     }
                                     is FirebaseAuthInvalidCredentialsException -> {
                                         when ((task.exception as FirebaseAuthInvalidCredentialsException).errorCode) {
                                             "ERROR_INVALID_EMAIL" -> {
-                                                setError(etEmail, R.string.email_is_invalid)
+                                                etEmail.setErrorWithFocus(getText(R.string.email_is_invalid))
                                             }
                                         }
                                     }
@@ -124,10 +125,5 @@ class RegistrationFragment : Fragment() {
         }
 
         return view
-    }
-
-    private fun setError(element: TextView, textId: Int) {
-        element.error = getText(textId)
-        element.requestFocus()
     }
 }
