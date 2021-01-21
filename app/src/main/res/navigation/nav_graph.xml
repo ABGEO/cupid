@@ -42,5 +42,18 @@
         android:id="@+id/navHomeFragment"
         android:name="dev.abgeo.cupid.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navHomeFragment_to_navSettingsFragment"
+            app:destination="@id/navSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navSettingsFragment"
+        android:name="dev.abgeo.cupid.fragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navSettingsFragment_to_navEntryPointFragment"
+            app:destination="@id/navEntryPointFragment" />
+    </fragment>
 </navigation>

@@ -2,6 +2,7 @@
     <string name="app_name">CUpid</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
     <string name="by_abgeo">By ABGEO</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
