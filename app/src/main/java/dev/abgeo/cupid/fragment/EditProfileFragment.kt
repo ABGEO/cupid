@@ -1,6 +1,9 @@
 package dev.abgeo.cupid.fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -16,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
@@ -24,7 +31,10 @@ class EditProfileFragment : Fragment() {
     private val TAG = this::class.qualifiedName
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
+    private lateinit var storage: FirebaseStorage
     private lateinit var user: User
+    private lateinit var avatar: ImageView
+    private var selectedImageUri: Uri? = null
     private var school: Int = -1
     private var gender = 0
 
@@ -33,6 +43,7 @@ class EditProfileFragment : Fragment() {
 
         auth = Firebase.auth
         db = FirebaseDatabase.getInstance()
+        storage = Firebase.storage
     }
 
     override fun onCreateView(
@@ -40,6 +51,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
+        avatar = view.findViewById(R.id.avatar)
         val etName = view.findViewById<EditText>(R.id.etName)
         val etAbout = view.findViewById<EditText>(R.id.etAbout)
         val etAge = view.findViewById<EditText>(R.id.etAge)
@@ -73,10 +85,17 @@ class EditProfileFragment : Fragment() {
             }
         }
 
+        avatar.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 1)
+        }
+
         auth.currentUser?.let {
-            db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+            db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object :
+                ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    dataSnapshot.getValue<User>()?.let {u ->
+                    dataSnapshot.getValue<User>()?.let { u ->
                         etName.setText(u.name)
                         etAbout.setText(u.about)
 
@@ -90,6 +109,13 @@ class EditProfileFragment : Fragment() {
 
                         rbMapping[u.gender]?.let { k ->
                             k.isChecked = true
+                        }
+
+                        storage.reference.child("avatars/${u.id}.png").downloadUrl.addOnSuccessListener { uri ->
+                            Glide.with(activity as Activity)
+                                .load(uri)
+                                .error(R.drawable.ic_account_64)
+                                .into(avatar)
                         }
 
                         user = u
@@ -136,11 +162,31 @@ class EditProfileFragment : Fragment() {
                     user.school = school
                     user.gender = gender
 
-                    user.id?.let { id -> db.reference.child("users").child(id).setValue(user) }
+                    user.id?.let { id ->
+                        db.reference.child("users").child(id).setValue(user)
+
+                        selectedImageUri?.let { uri ->
+                            storage.reference.child("avatars/$id.png").putFile(uri)
+                        }
+                    }
+
+                    Snackbar.make(it, getText(R.string.profile_updated), Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
 
         return view
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val imageUri = data?.data
+            selectedImageUri = imageUri
+            avatar.setImageURI(selectedImageUri)
+        }
+    }
+
 }

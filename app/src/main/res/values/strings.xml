@@ -22,6 +22,7 @@
     <string name="save_profile">Save Profile</string>
     <string name="about">About</string>
     <string name="age">Age</string>
+    <string name="profile_updated">Your profile has been updated successfully.</string>
     <string-array name="schools">
         <item>School Of Business</item>
         <item>School Of Law</item>
