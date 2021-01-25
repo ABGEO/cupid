@@ -18,5 +18,21 @@
     <string name="password_is_empty">Password can not be empty.</string>
     <string name="gender_is_empty">Select the gender.</string>
     <string name="invalid_credentials">Invalid credentials was provided.</string>
+    <string name="age_is_invalid">Age must be an positive number</string>
     <string name="save_profile">Save Profile</string>
+    <string name="about">About</string>
+    <string name="age">Age</string>
+    <string-array name="schools">
+        <item>School Of Business</item>
+        <item>School Of Law</item>
+        <item>School of Media</item>
+        <item>School Of Technology</item>
+        <item>School Of Governance</item>
+        <item>School of Humanities and Social Sciences</item>
+        <item>School Of Tourism</item>
+        <item>Medicine and Healthcare Management School</item>
+        <item>School of New Cinema</item>
+        <item>School of Economics</item>
+        <item>Caucasus Education School</item>
+    </string-array>
 </resources>
