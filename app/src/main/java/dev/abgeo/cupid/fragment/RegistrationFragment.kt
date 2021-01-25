@@ -17,6 +17,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
+import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
 
 class RegistrationFragment : Fragment() {
@@ -88,13 +89,13 @@ class RegistrationFragment : Fragment() {
                                 Log.d(TAG, "createUserWithEmail: success")
 
                                 auth.currentUser?.let {
-                                    val currentUserDb = db.reference.child("users").child(it.uid)
-                                    val userInfo = mapOf(
-                                            "name" to etName.text.toString(),
-                                            "gender" to gender
+                                    val user = User(
+                                            it.uid,
+                                            etName.text.toString(),
+                                            etEmail.text.toString(),
+                                            gender
                                     )
-
-                                    currentUserDb.updateChildren(userInfo)
+                                    db.reference.child("users").child(it.uid).setValue(user)
 
                                     // TODO: Post Live Data with user object.
                                 }
