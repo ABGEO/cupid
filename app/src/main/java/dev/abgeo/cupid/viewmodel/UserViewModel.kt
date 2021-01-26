@@ -10,7 +10,6 @@ class UserViewModel : ViewModel() {
     val currentUserLiveData: LiveData<User>
         get() = _currentUserLiveData
 
-
     fun postCurrentUser(user: User) {
         _currentUserLiveData.postValue(user)
     }

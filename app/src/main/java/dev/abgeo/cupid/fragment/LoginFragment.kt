@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -47,6 +48,7 @@ class LoginFragment : Fragment() {
         val btnSignIn = view.findViewById<Button>(R.id.btnSignIn)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
+        val tvForgot = view.findViewById<TextView>(R.id.tvForgot)
 
         btnSignIn.setOnClickListener {
             // TODO: Implement loader.
@@ -88,6 +90,10 @@ class LoginFragment : Fragment() {
                             }
                 }
             }
+        }
+
+        tvForgot.setOnClickListener {
+            findNavController().navigate(R.id.action_navLoginFragment_to_navResetPasswordFragment)
         }
 
         return view

@@ -15,7 +15,10 @@ class MainActivity : AppCompatActivity() {
         findNavController(R.id.nav_host_fragment).addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.navEditProfileFragment,
-                R.id.navSettingsFragment -> {
+                R.id.navSettingsFragment,
+                R.id.navLoginFragment,
+                R.id.navRegistrationFragment,
+                R.id.navResetPasswordFragment -> {
                     supportActionBar?.show()
                 }
                 else -> {

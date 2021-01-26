@@ -23,6 +23,8 @@
     <string name="about">About</string>
     <string name="age">Age</string>
     <string name="profile_updated">Your profile has been updated successfully.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_email_sent">Password reset instructions was sent to your email.</string>
     <string-array name="schools">
         <item>School Of Business</item>
         <item>School Of Law</item>
