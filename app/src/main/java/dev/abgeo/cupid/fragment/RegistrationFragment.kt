@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -19,12 +20,15 @@ import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
+import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class RegistrationFragment : Fragment() {
     private val TAG = this::class.qualifiedName
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
     private var gender = 0
+
+    private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,8 +100,7 @@ class RegistrationFragment : Fragment() {
                                             gender
                                     )
                                     db.reference.child("users").child(it.uid).setValue(user)
-
-                                    // TODO: Post Live Data with user object.
+                                    userViewModel.postCurrentUser(user)
                                 }
 
                                 findNavController().navigate(R.id.action_navRegistrationFragment_to_navHomeFragment)

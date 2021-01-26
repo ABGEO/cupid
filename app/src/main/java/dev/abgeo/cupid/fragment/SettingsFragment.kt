@@ -10,21 +10,22 @@ import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.RadioButton
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
+import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class SettingsFragment : Fragment() {
     private val TAG = this::class.qualifiedName
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
+    private lateinit var user: User
+
+    private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,21 +49,13 @@ class SettingsFragment : Fragment() {
                 3 to rbBoth,
         )
 
-        auth.currentUser?.let {
-            db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    dataSnapshot.getValue<User>()?.let { u ->
-                        rbMapping[u.interestedIn]?.let { k ->
-                            k.isChecked = true
-                        }
-                    }
-                }
+        userViewModel.currentUserLiveData.observe(viewLifecycleOwner, {
+            user = it
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-                }
-            })
-        }
+            rbMapping[user.interestedIn]?.let { k ->
+                k.isChecked = true
+            }
+        })
 
         rbMale.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
@@ -94,15 +87,10 @@ class SettingsFragment : Fragment() {
     }
 
     private fun updateInterestedIn(value: Int) {
-        auth.currentUser?.let {
-            val currentUserDb = db.reference.child("users").child(it.uid)
-            val userInfo = mapOf(
-                    "interestedIn" to value
-            )
-
-            currentUserDb.updateChildren(userInfo)
-
-            // TODO: Post Live Data with user object.
+        user.id?.let {
+            user.interestedIn = value
+            db.reference.child("users").child(it).setValue(user)
+            userViewModel.postCurrentUser(user)
         }
     }
 

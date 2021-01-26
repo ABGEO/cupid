@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -22,11 +23,14 @@ import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
+import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class LoginFragment : Fragment() {
     private val TAG = this::class.qualifiedName
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
+
+    private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,13 +70,11 @@ class LoginFragment : Fragment() {
                                     auth.currentUser?.let {
                                         db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                var user = dataSnapshot.getValue<User>()
-
-                                                // TODO: Post Live Data with user object.
+                                                dataSnapshot.getValue<User>()?.let { u -> userViewModel.postCurrentUser(u) }
                                             }
 
                                             override fun onCancelled(databaseError: DatabaseError) {
-                                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                                                Log.w(TAG, "onCancelled", databaseError.toException())
                                             }
                                         })
                                     }

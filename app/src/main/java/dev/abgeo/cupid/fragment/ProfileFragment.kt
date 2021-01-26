@@ -11,31 +11,22 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import dev.abgeo.cupid.R
-import dev.abgeo.cupid.entity.User
+import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class ProfileFragment : Fragment() {
-    private val TAG = this::class.qualifiedName
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseDatabase
     private lateinit var storage: FirebaseStorage
+
+    private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        auth = Firebase.auth
-        db = FirebaseDatabase.getInstance()
         storage = Firebase.storage
     }
 
@@ -50,27 +41,16 @@ class ProfileFragment : Fragment() {
         val ibSettings = view.findViewById<ImageButton>(R.id.ibSettings)
         val ibEdit = view.findViewById<ImageButton>(R.id.ibEdit)
 
-        auth.currentUser?.let {
-            db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    dataSnapshot.getValue<User>()?.let { u ->
-                        tvName.setText(u.name)
+        userViewModel.currentUserLiveData.observe(viewLifecycleOwner, {
+            tvName.text = it.name
 
-                        storage.reference.child("avatars/${u.id}.png").downloadUrl.addOnSuccessListener { uri ->
-                            Glide.with(activity as Activity)
-                                .load(uri)
-                                .error(R.drawable.ic_account_64)
-                                .into(avatar)
-                        }
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-                }
-            })
-        }
+            storage.reference.child("avatars/${it.id}.png").downloadUrl.addOnSuccessListener { uri ->
+                Glide.with(activity as Activity)
+                        .load(uri)
+                        .error(R.drawable.ic_account_64)
+                        .into(avatar)
+            }
+        })
 
         ibSettings.setOnClickListener {
             findNavController().navigate(R.id.action_navHomeFragment_to_navSettingsFragment)

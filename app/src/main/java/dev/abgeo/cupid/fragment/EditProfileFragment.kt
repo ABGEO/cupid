@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -26,22 +27,21 @@ import com.google.firebase.storage.ktx.storage
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
+import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class EditProfileFragment : Fragment() {
     private val TAG = this::class.qualifiedName
-    private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
     private lateinit var storage: FirebaseStorage
     private lateinit var user: User
     private lateinit var avatar: ImageView
     private var selectedImageUri: Uri? = null
-    private var school: Int = -1
-    private var gender = 0
+
+    private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        auth = Firebase.auth
         db = FirebaseDatabase.getInstance()
         storage = Firebase.storage
     }
@@ -76,12 +76,12 @@ class EditProfileFragment : Fragment() {
         sSchool.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 Log.d(TAG, "onItemSelected: $position")
-                school = position
+                user.school = position
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.d(TAG, "onNothingSelected: -1")
-                school = -1
+                user.school = -1
             }
         }
 
@@ -91,54 +91,43 @@ class EditProfileFragment : Fragment() {
             startActivityForResult(intent, 1)
         }
 
-        auth.currentUser?.let {
-            db.reference.child("users").child(it.uid).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    dataSnapshot.getValue<User>()?.let { u ->
-                        etName.setText(u.name)
-                        etAbout.setText(u.about)
+        userViewModel.currentUserLiveData.observe(viewLifecycleOwner, {
+            user = it
 
-                        if (u.age != null) {
-                            etAge.setText(u.age.toString())
-                        }
+            etName.setText(user.name)
+            etAbout.setText(user.about)
 
-                        if (u.school != -1) {
-                            sSchool.setSelection(u.school)
-                        }
+            if (user.age != null) {
+                etAge.setText(user.age.toString())
+            }
 
-                        rbMapping[u.gender]?.let { k ->
-                            k.isChecked = true
-                        }
+            if (user.school != -1) {
+                sSchool.setSelection(user.school)
+            }
 
-                        storage.reference.child("avatars/${u.id}.png").downloadUrl.addOnSuccessListener { uri ->
-                            Glide.with(activity as Activity)
-                                .load(uri)
-                                .error(R.drawable.ic_account_64)
-                                .into(avatar)
-                        }
+            rbMapping[user.gender]?.let { k ->
+                k.isChecked = true
+            }
 
-                        user = u
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-                }
-            })
-        }
+            storage.reference.child("avatars/${user.id}.png").downloadUrl.addOnSuccessListener { uri ->
+                Glide.with(activity as Activity)
+                        .load(uri)
+                        .error(R.drawable.ic_account_64)
+                        .into(avatar)
+            }
+        })
 
         rbMale.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
                 Log.d(TAG, "onCheckedChangeListener: Male gender checked")
-                gender = 1
+                user.gender = 1
             }
         }
 
         rbFemale.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
                 Log.d(TAG, "onCheckedChangeListener: Female gender checked")
-                gender = 2
+                user.gender = 2
             }
         }
 
@@ -152,24 +141,25 @@ class EditProfileFragment : Fragment() {
                 etAge.text.isEmpty() || etAge.text.toString().toInt() <= 0 -> {
                     etAge.setErrorWithFocus(getText(R.string.age_is_invalid))
                 }
-                gender == 0 -> {
+                user.gender == 0 -> {
                     rbMale.setErrorWithFocus(getText(R.string.gender_is_empty))
                 }
                 else -> {
                     user.name = etName.text.toString()
                     user.about = etAbout.text.toString()
                     user.age = etAge.text.toString().toInt()
-                    user.school = school
-                    user.gender = gender
 
                     user.id?.let { id ->
                         db.reference.child("users").child(id).setValue(user)
 
                         selectedImageUri?.let { uri ->
-                            storage.reference.child("avatars/$id.png").putFile(uri)
+                            storage.reference.child("avatars/$id.png").putFile(uri).addOnCompleteListener {
+                                userViewModel.postCurrentUser(user)
+                            }
                         }
                     }
 
+                    userViewModel.postCurrentUser(user)
                     Snackbar.make(it, getText(R.string.profile_updated), Snackbar.LENGTH_SHORT)
                         .show()
                 }
