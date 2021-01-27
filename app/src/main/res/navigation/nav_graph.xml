@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_navHomeFragment_to_navEditProfileFragment"
             app:destination="@id/navEditProfileFragment" />
+        <action
+            android:id="@+id/action_navHomeFragment_to_navPersonProfileFragment"
+            app:destination="@id/navPersonProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/navSettingsFragment"
@@ -72,4 +75,9 @@
         android:name="dev.abgeo.cupid.fragment.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" />
+    <fragment
+        android:id="@+id/navPersonProfileFragment"
+        android:name="dev.abgeo.cupid.fragment.PersonProfileFragment"
+        android:label="fragment_person_profile"
+        tools:layout="@layout/fragment_person_profile" />
 </navigation>

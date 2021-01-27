@@ -18,7 +18,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.navSettingsFragment,
                 R.id.navLoginFragment,
                 R.id.navRegistrationFragment,
-                R.id.navResetPasswordFragment -> {
+                R.id.navResetPasswordFragment,
+                R.id.navPersonProfileFragment -> {
                     supportActionBar?.show()
                 }
                 else -> {

@@ -7,13 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import dev.abgeo.cupid.R
@@ -80,8 +77,20 @@ class MatchFragment : Fragment() {
             override fun onScroll(scrollProgressPercent: Float) {}
         })
 
-        flingContainer.setOnItemClickListener { position: Int, item: Any ->
-            Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
+        flingContainer.setOnItemClickListener { _: Int, item: Any ->
+            (item as PersonCard).id?.let {
+                db.reference.child("users").child(it).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        dataSnapshot.getValue<User>()?.let { u -> userViewModel.postPerson(u) }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.w(TAG, "onCancelled", databaseError.toException())
+                    }
+                })
+            }
+
+            findNavController().navigate(R.id.action_navHomeFragment_to_navPersonProfileFragment)
         }
 
         ibReject.setOnClickListener {
