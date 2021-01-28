@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
+import dev.abgeo.cupid.helper.showProgressDisableButton
 import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class RegistrationFragment : Fragment() {
@@ -42,6 +43,7 @@ class RegistrationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_registration, container, false)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val btnSignUp = view.findViewById<Button>(R.id.btnSignUp)
         val etName = view.findViewById<EditText>(R.id.etName)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
@@ -65,26 +67,32 @@ class RegistrationFragment : Fragment() {
         }
 
         btnSignUp.setOnClickListener {
-            // TODO: Implement loader.
+            showProgressDisableButton(progressBar, btnSignUp, true)
 
             when {
                 etName.text.isEmpty() -> {
                     etName.setErrorWithFocus(getText(R.string.name_is_invalid))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 etEmail.text.isEmpty() -> {
                     etEmail.setErrorWithFocus(getText(R.string.email_is_empty))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 !etEmail.text.endsWith("@cu.edu.ge") -> {
                     etEmail.setErrorWithFocus(getText(R.string.not_cu_email))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 etPassword.text.length < 6 -> {
                     etPassword.setErrorWithFocus(getText(R.string.password_is_invalid))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 etPassword.text.toString() != etRepeatPassword.text.toString() -> {
                     etRepeatPassword.setErrorWithFocus(getText(R.string.passwords_mismatch))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 gender == 0 -> {
                     rbMale.setErrorWithFocus(getText(R.string.gender_is_empty))
+                    showProgressDisableButton(progressBar, btnSignUp, false)
                 }
                 else -> {
                     auth.createUserWithEmailAndPassword(
@@ -125,6 +133,8 @@ class RegistrationFragment : Fragment() {
                                         }
                                     }
                                 }
+
+                                showProgressDisableButton(progressBar, btnSignUp, false)
                             }
                         }
                 }

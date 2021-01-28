@@ -7,10 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +21,7 @@ import com.google.firebase.ktx.Firebase
 import dev.abgeo.cupid.R
 import dev.abgeo.cupid.entity.User
 import dev.abgeo.cupid.helper.setErrorWithFocus
+import dev.abgeo.cupid.helper.showProgressDisableButton
 import dev.abgeo.cupid.viewmodel.UserViewModel
 
 class LoginFragment : Fragment() {
@@ -45,20 +43,23 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val btnSignIn = view.findViewById<Button>(R.id.btnSignIn)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val tvForgot = view.findViewById<TextView>(R.id.tvForgot)
 
         btnSignIn.setOnClickListener {
-            // TODO: Implement loader.
+            showProgressDisableButton(progressBar, btnSignIn, true)
 
             when {
                 etEmail.text.isEmpty() -> {
                     etEmail.setErrorWithFocus(getText(R.string.email_is_empty))
+                    showProgressDisableButton(progressBar, btnSignIn, false)
                 }
                 etPassword.text.isEmpty() -> {
                     etPassword.setErrorWithFocus(getText(R.string.password_is_empty))
+                    showProgressDisableButton(progressBar, btnSignIn, false)
                 }
                 else -> {
                     auth.signInWithEmailAndPassword(
@@ -85,6 +86,7 @@ class LoginFragment : Fragment() {
                                 } else {
                                     Log.w(TAG, "createUserWithEmail: failure", task.exception)
 
+                                    showProgressDisableButton(progressBar, btnSignIn, false)
                                     Toast.makeText(context, getText(R.string.invalid_credentials), Toast.LENGTH_SHORT).show()
                                 }
                             }
