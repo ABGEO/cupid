@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
@@ -65,7 +66,40 @@ class MatchFragment : Fragment() {
             }
 
             override fun onRightCardExit(dataObject: Any) {
-                (dataObject as PersonCard).id?.let { writeMatchResult(it, true) }
+                (dataObject as PersonCard).id?.let { it ->
+                    writeMatchResult(it, true)
+
+                    currentUser.id?.let { id ->
+                        db.reference.child("matches").child(it).child(id)
+                            .addListenerForSingleValueEvent(
+                                object : ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        dataSnapshot.getValue<Boolean>()?.let { matched ->
+
+                                            Log.d(TAG, "onDataChange: $matched")
+
+                                            if (matched) {
+                                                val snackBar = Snackbar.make(
+                                                    view,
+                                                    R.string.you_matched,
+                                                    Snackbar.LENGTH_LONG
+                                                )
+                                                snackBar.setAction(
+                                                    R.string.go_to_profile,
+                                                    VisitProfileListener(it)
+                                                )
+                                                snackBar.show()
+                                                Log.d(TAG, "onDataChange: 2212122121")
+                                            }
+                                        }
+                                    }
+
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        Log.w(TAG, "onCancelled", databaseError.toException())
+                                    }
+                                })
+                    }
+                }
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
@@ -78,19 +112,7 @@ class MatchFragment : Fragment() {
         })
 
         flingContainer.setOnItemClickListener { _: Int, item: Any ->
-            (item as PersonCard).id?.let {
-                db.reference.child("users").child(it).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        dataSnapshot.getValue<User>()?.let { u -> userViewModel.postPerson(u) }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.w(TAG, "onCancelled", databaseError.toException())
-                    }
-                })
-            }
-
-            findNavController().navigate(R.id.action_navHomeFragment_to_navPersonProfileFragment)
+            (item as PersonCard).id?.let { navigateToProfile(it) }
         }
 
         ibReject.setOnClickListener {
@@ -137,7 +159,25 @@ class MatchFragment : Fragment() {
         currentUser.id?.let {
             db.reference.child("matches").child(it).child(userId).setValue(result)
         }
+    }
 
-        // TODO: Check "Reverse Match"
+    private fun navigateToProfile(userId: String) {
+        db.reference.child("users").child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.getValue<User>()?.let { u -> userViewModel.postPerson(u) }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "onCancelled", databaseError.toException())
+            }
+        })
+
+        findNavController().navigate(R.id.action_navHomeFragment_to_navPersonProfileFragment)
+    }
+
+    inner class VisitProfileListener(private val userId: String) : View.OnClickListener {
+        override fun onClick(v: View) {
+            navigateToProfile(userId)
+        }
     }
 }
