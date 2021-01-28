@@ -13,6 +13,7 @@
     <string name="email_is_taken">This email is already taken.</string>
     <string name="email_is_invalid">This email is not valid.</string>
     <string name="email_is_empty">Email can not be empty.</string>
+    <string name="not_cu_email">You can Sign Up only with @cu.edu.ge email.</string>
     <string name="passwords_mismatch">Passwords does not match.</string>
     <string name="password_is_invalid">Password should be at least 6 characters.</string>
     <string name="password_is_empty">Password can not be empty.</string>

@@ -74,6 +74,9 @@ class RegistrationFragment : Fragment() {
                 etEmail.text.isEmpty() -> {
                     etEmail.setErrorWithFocus(getText(R.string.email_is_empty))
                 }
+                !etEmail.text.endsWith("@cu.edu.ge") -> {
+                    etEmail.setErrorWithFocus(getText(R.string.not_cu_email))
+                }
                 etPassword.text.length < 6 -> {
                     etPassword.setErrorWithFocus(getText(R.string.password_is_invalid))
                 }
