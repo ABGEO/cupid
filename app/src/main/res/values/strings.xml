@@ -28,6 +28,8 @@
     <string name="reset_email_sent">Password reset instructions was sent to your email.</string>
     <string name="you_matched">Congratulations, you Matched!</string>
     <string name="go_to_profile">Go to the profile</string>
+    <string name="no_people_to_show">No more People to show…</string>
+    <string name="no_matches">You do not have matches yeat. Keep searching!</string>
     <string-array name="schools">
         <item>School Of Business</item>
         <item>School Of Law</item>

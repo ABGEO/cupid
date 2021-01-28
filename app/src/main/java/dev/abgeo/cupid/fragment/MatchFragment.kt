@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -28,6 +29,11 @@ class MatchFragment : Fragment() {
     private lateinit var currentUser: User
     private var personCards: MutableList<PersonCard> = ArrayList()
 
+    private lateinit var tvIsEmptyMessage: TextView
+    private lateinit var flingContainer: SwipeFlingAdapterView
+    private lateinit var ibReject: ImageButton
+    private lateinit var ibMatch: ImageButton
+
     private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +47,10 @@ class MatchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_match, container, false)
-        val flingContainer = view.findViewById<SwipeFlingAdapterView>(R.id.flingContainer)
-        val ibReject = view.findViewById<ImageButton>(R.id.ibReject)
-        val ibMatch = view.findViewById<ImageButton>(R.id.ibMatch)
+        tvIsEmptyMessage = view.findViewById(R.id.tvIsEmptyMessage)
+        flingContainer = view.findViewById(R.id.flingContainer)
+        ibReject = view.findViewById(R.id.ibReject)
+        ibMatch = view.findViewById(R.id.ibMatch)
 
         userViewModel.currentUserLiveData.observe(viewLifecycleOwner, {
             currentUser = it
@@ -140,6 +147,10 @@ class MatchFragment : Fragment() {
                         ))
                         cardsAdapter.notifyDataSetChanged()
 
+                        tvIsEmptyMessage.visibility = View.INVISIBLE
+                        ibReject.visibility = View.VISIBLE
+                        ibMatch.visibility = View.VISIBLE
+
                         Log.d(TAG, "getUsersToMatch: onChildAdded")
                     }
                 }
@@ -150,6 +161,12 @@ class MatchFragment : Fragment() {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+
+        if (personCards.isEmpty()) {
+            tvIsEmptyMessage.visibility = View.VISIBLE
+            ibReject.visibility = View.INVISIBLE
+            ibMatch.visibility = View.INVISIBLE
+        }
     }
 
     private fun writeMatchResult(userId : String, result : Boolean) {

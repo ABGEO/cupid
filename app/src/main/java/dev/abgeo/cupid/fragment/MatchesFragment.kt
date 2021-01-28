@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.google.firebase.auth.FirebaseAuth
@@ -28,6 +29,8 @@ class MatchesFragment : Fragment(), CellClickListener {
     private lateinit var db: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var tvIsEmptyMessage: TextView
+
     private val userViewModel: UserViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +45,7 @@ class MatchesFragment : Fragment(), CellClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_matches_list, container, false)
+        tvIsEmptyMessage = view.findViewById(R.id.tvIsEmptyMessage)
         val rvMatches = view.findViewById<RecyclerView>(R.id.rvMatches)
 
         val matches: MutableList<PersonCard> = ArrayList()
@@ -86,6 +90,7 @@ class MatchesFragment : Fragment(), CellClickListener {
                                                                     u.name + (if (null != u.age) ", ${u.age}" else "")
                                                                 )
                                                             )
+                                                            tvIsEmptyMessage.visibility = View.INVISIBLE
                                                             rvMatches.adapter?.notifyDataSetChanged()
                                                         }
                                                     }

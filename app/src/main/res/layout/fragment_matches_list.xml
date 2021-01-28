@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".fragment.MatchesFragment">
 
+    <TextView
+        android:id="@+id/tvIsEmptyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/no_matches"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rvMatches" />
 
     <TextView
         android:id="@+id/tvMatches"
