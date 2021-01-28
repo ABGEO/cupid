@@ -25,6 +25,7 @@ class HomeFragment : Fragment() {
 
         tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_account_64)
         tabLayout.getTabAt(1)?.setIcon(R.drawable.cupid)?.select()
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_compare_arrows_64)
 
         return view
     }

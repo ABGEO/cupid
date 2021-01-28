@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import dev.abgeo.cupid.fragment.ProfileFragment
 import dev.abgeo.cupid.fragment.MatchFragment
+import dev.abgeo.cupid.fragment.MatchesFragment
 
 class HomePageAdapter(
     fragmentManager: FragmentManager
@@ -12,10 +13,11 @@ class HomePageAdapter(
     fragmentManager,
     BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 ) {
-    override fun getCount(): Int = 2
+    override fun getCount(): Int = 3
 
     override fun getItem(i: Int): Fragment = when (i) {
         0 -> ProfileFragment()
-        else -> MatchFragment()
+        1 -> MatchFragment()
+        else -> MatchesFragment()
     }
 }

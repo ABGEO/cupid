@@ -89,7 +89,6 @@ class MatchFragment : Fragment() {
                                                     VisitProfileListener(it)
                                                 )
                                                 snackBar.show()
-                                                Log.d(TAG, "onDataChange: 2212122121")
                                             }
                                         }
                                     }
